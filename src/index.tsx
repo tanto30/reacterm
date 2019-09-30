@@ -7,7 +7,7 @@ import {
   TerminalPlugin
 } from "./plugins";
 
-export default {
+export {
   Terminal,
   AutoCompletePlugin,
   BasePlugin,

@@ -2,12 +2,12 @@
 
 > React component to render a terminal with plugin based functionality
 
-[![NPM](https://img.shields.io/npm/v/react-terminal.svg)](https://www.npmjs.com/package/react-terminal) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-terminal.svg)](https://www.npmjs.com/package/reacterm) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
 ## Install
 
 ```bash
-npm install --save react-terminal
+npm install --save reacterm
 ```
 
 ## Usage
@@ -15,12 +15,12 @@ npm install --save react-terminal
 ```tsx
 import * as React from 'react'
 
-import MyComponent from 'react-terminal'
+import {Terminal} from 'reacterm'
 
 class Example extends React.Component {
   render () {
     return (
-      <MyComponent />
+      <Terminal plugins={[]}/>
     )
   }
 }

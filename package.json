@@ -1,10 +1,10 @@
 {
-  "name": "react-terminal",
-  "version": "1.0.0",
+  "name": "reacterm",
+  "version": "1.0.1",
   "description": "React component to render a terminal with plugin based functionality",
   "author": "tanto30",
   "license": "MIT",
-  "repository": "tanto30/react-terminal",
+  "repository": "tanto30/reacterm",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
