@@ -16,11 +16,12 @@ npm install --save reacterm
 import * as React from 'react'
 
 import {
-  Terminal,         // Main component
-  HistoryPlugin,    // History plugin to allow arrowup and arrowdown 
-  FileSystemPlugin, // FS plugin to simulate filesystem in memory (note: WIP)
-  BasePlugin        // Base plugin to allow 'Command not found' and help command, can be extended
-  TerminalPlugin    // Base (abstract) class to define a terminal plugin
+  Terminal,          // Main component
+  HistoryPlugin,     // History plugin to allow arrowup and arrowdown 
+  FileSystemPlugin,  // FS plugin to simulate filesystem in memory (note: WIP)
+  AutoCompletePlugin // Auto-complete plugin to allow tab auto completion
+  BasePlugin         // Base plugin to allow 'Command not found' and help command, can be extended
+  TerminalPlugin     // Base (abstract) class to define a terminal plugin
 } from 'reacterm'
 
 class Example extends React.Component {
