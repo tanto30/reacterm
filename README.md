@@ -1,4 +1,4 @@
-# react-terminal
+# reacterm
 
 > React component to render a terminal with plugin based functionality
 
@@ -15,12 +15,18 @@ npm install --save reacterm
 ```tsx
 import * as React from 'react'
 
-import {Terminal} from 'reacterm'
+import {
+  Terminal,         // Main component
+  HistoryPlugin,    // History plugin to allow arrowup and arrowdown 
+  FileSystemPlugin, // FS plugin to simulate filesystem in memory (note: WIP)
+  BasePlugin        // Base plugin to allow 'Command not found' and help command, can be extended
+  TerminalPlugin    // Base (abstract) class to define a terminal plugin
+} from 'reacterm'
 
 class Example extends React.Component {
   render () {
     return (
-      <Terminal plugins={[]}/>
+      <Terminal plugins={[BasePlugin, HistoryPlugin]}/>
     )
   }
 }
