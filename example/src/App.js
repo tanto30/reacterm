@@ -1,12 +1,17 @@
 import React, {Component}  from 'react'
 
-import {Terminal} from 'react-terminal';
+import {
+  Terminal,
+  BasePlugin
+} from 'reacterm';
 
 export default class App extends Component {
   render () {
     return (
       <div>
-        <Terminal plugins={[]}/>
+        <Terminal plugins={[
+          BasePlugin
+        ]}/>
       </div>
     )
   }
