@@ -1,20 +1,18 @@
 .Console-container {
   font-family: Consolas, monospace;
   font-size: small;
-  background-color: cyan;
+  background-color: black;
+  color: white;
   height: calc(100% - 60px);
+  width: calc(100% - 60px);
   overflow: auto;
   padding: 30px;
-}
-
-#root {
-  height: 100%;
 }
 
 #Console-inputelement {
   background-color: transparent;
   font: inherit;
-  color: black;
+  color: white;
   border: none;
   outline: none;
   overflow: hidden;
