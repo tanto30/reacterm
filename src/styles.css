@@ -3,10 +3,10 @@
   font-size: small;
   background-color: black;
   color: white;
-  height: calc(100% - 60px);
-  width: calc(100% - 60px);
+  height: calc(100% - 40px);
+  width: calc(100% - 40px);
   overflow: auto;
-  padding: 30px;
+  padding: 20px;
 }
 
 #Console-inputelement {
