@@ -33,8 +33,8 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.setState({inputValue: val});
   }
 
-  public print(val: string) {
-    this.printAggregation.push(val);
+  public print(val?: string) {
+    this.printAggregation.push(val ? val: '');
   }
 
   public performPrint() {
@@ -88,6 +88,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.setState({
       user: user
     });
+  }
+
+  printAndFlush(val: string) {
+    this.print(val);
+    this.performPrint();
   }
 
   private ScrollToBottom() {

@@ -1,7 +1,7 @@
 export interface ITerminal {
   getInputValue: () => string;
   setInputValue: (val: string) => void;
-  print: (val: string) => void;
+  print: (val?: string) => void;
   moveCursorToEnd: () => void;
   getAllCommands: () => string[];
   getPath: () => string;
@@ -9,6 +9,7 @@ export interface ITerminal {
   getUser: () => string;
   setUser: (user: string, newLine?: boolean) => void;
   performPrint: () => void;
+  printAndFlush: (val: string) => void;
 }
 
 export abstract class AbsTerminalPlugin {
