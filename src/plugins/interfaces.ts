@@ -11,7 +11,7 @@ export interface ITerminal {
   performPrint: () => void;
 }
 
-export abstract class TerminalPlugin {
+export abstract class AbsTerminalPlugin {
   protected term: ITerminal;
   public commands: {[key: string]: (args: string[]) => void} = {};
   public keyedowns: {[key: string]: () => void} = {};

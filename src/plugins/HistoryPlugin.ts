@@ -1,4 +1,4 @@
-import {TerminalPlugin} from './interfaces';
+import {AbsTerminalPlugin} from './interfaces';
 
 class TerminalHistory {
   private list: string[];
@@ -34,7 +34,7 @@ class TerminalHistory {
   }
 }
 
-export class HistoryPlugin extends TerminalPlugin {
+export class HistoryPlugin extends AbsTerminalPlugin {
   termhist = new TerminalHistory();
   keyedowns = {
     'Enter': () => {

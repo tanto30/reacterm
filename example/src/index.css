@@ -5,19 +5,49 @@ body, html, #root, .cont {
   width: 100%;
   display: flex;
   flex-direction: column;
+  font-family: Consolas;
 }
 
 #header {
-  background: cyan;
+  background: #aaa;
   transition: height .5s;
 }
 
 #expand {
   text-align: center;
-  font-family: Arial;
-  background-color: #555;
+  background-color: #444;
+  color: white;
+  height: 20px;
 }
 
 #expand:hover {
-  background-color: #777;
+  background-color: #666;
 }
+
+#sidebar {
+  height: 100%;
+  background-color: #222;
+  flex-direction: column-reverse;
+  display: flex;
+}
+
+#sidebar a {
+  text-decoration: none;
+  color: #818181;
+  display: block;
+  padding: 0px 10px 20px 10px;
+}
+
+#content {
+  display: flex;
+  height: 100%;
+}
+
+#sidexpand {
+  width: 20px;
+  background-color: #444;
+}
+
+/* #sidexpand:hover {
+  background-color: #666;
+} */

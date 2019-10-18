@@ -1,6 +1,6 @@
-import {TerminalPlugin} from "./interfaces";
+import {AbsTerminalPlugin} from "./interfaces";
 
-export class AutoCompletePlugin extends TerminalPlugin {
+export class AutoCompletePlugin extends AbsTerminalPlugin {
 
   private static longestCommonPrefix(strs: string[]) {
     let max = strs.reduce((s1, s2) => {

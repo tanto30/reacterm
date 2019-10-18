@@ -4,7 +4,7 @@ import {
   BasePlugin,
   FileSystemPlugin,
   HistoryPlugin,
-  TerminalPlugin,
+  AbsTerminalPlugin,
   ITerminal
 } from "./plugins";
 
@@ -14,6 +14,6 @@ export {
   BasePlugin,
   FileSystemPlugin,
   HistoryPlugin,
-  TerminalPlugin,
+  AbsTerminalPlugin,
   ITerminal
 }

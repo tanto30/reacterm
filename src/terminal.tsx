@@ -1,6 +1,6 @@
 import * as React from 'react';
 import "./styles.css";
-import {ITerminal, TerminalPlugin} from "./plugins";
+import {ITerminal, AbsTerminalPlugin} from "./plugins";
 
 export type ConsoleProps = {
   plugins: ITerminalPluginClass[]
@@ -11,10 +11,10 @@ export type ConsoleState = {
   user: string,
   path: string
 };
-type ITerminalPluginClass = new (term: ITerminal) => TerminalPlugin;
+type ITerminalPluginClass = new (term: ITerminal) => AbsTerminalPlugin;
 
 class Terminal extends React.Component<ConsoleProps, ConsoleState> implements ITerminal {
-  private pluginsInUse: TerminalPlugin[] = [];
+  private pluginsInUse: AbsTerminalPlugin[] = [];
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
   private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
   private printAggregation: string[] = [];
@@ -56,6 +56,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   public getAllCommands() {
     const commands = Object.keys(this.commandHanlers);
     commands.splice(commands.indexOf('_Default'), 1);
+    commands.splice(commands.indexOf('_Empty'), 1);
     return commands;
   }
 
@@ -68,9 +69,9 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       this.print('');
       this.performPrint();
     }
-    this.setState(() => ({
+    this.setState({
       path: path
-    }));
+    });
   }
 
   getUser() {
@@ -82,7 +83,9 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       this.print('');
       this.performPrint();
     }
-    this.setState({user: user});
+    this.setState({
+      user: user
+    });
   }
 
   private keyDownHandler = (e: KeyboardEvent) => {
@@ -104,10 +107,13 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         handlers.forEach((f) => {
           f(args);
         })
+      } else if (cmd.length == 0) {
+        if (this.commandHanlers.hasOwnProperty('_Empty')) 
+          this.commandHanlers['_Empty'].forEach((f) => f(args));
+        if (this.commandHanlers.hasOwnProperty(''))
+          this.commandHanlers[''].forEach((f) => f(args));
       } else if (this.commandHanlers.hasOwnProperty('_Default')) {
-        this.commandHanlers['_Default'].forEach((f) => {
-          f(args);
-        })
+        this.commandHanlers['_Default'].forEach((f) => f(args));
       }
     }
     ];

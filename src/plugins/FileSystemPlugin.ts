@@ -1,8 +1,8 @@
-import {ITerminal, TerminalPlugin} from "./interfaces";
+import {ITerminal, AbsTerminalPlugin} from "./interfaces";
 
 type FileTree = {[key: string]: FileTree | string};
 type RootFileTree = {'/': FileTree};
-export class FileSystemPlugin extends TerminalPlugin {
+export class FileSystemPlugin extends AbsTerminalPlugin {
   private data: RootFileTree = {'/': {}};
   private cwd: string = '/';
 
