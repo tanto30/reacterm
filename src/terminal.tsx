@@ -18,6 +18,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
   private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
   private printAggregation: string[] = [];
+  private container: HTMLDivElement | null;
 
   constructor(props: ConsoleProps) {
     super(props);
@@ -44,6 +45,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       }));
       this.printAggregation = [];
     }
+    this.ScrollToBottom();
   }
 
   public moveCursorToEnd() {
@@ -60,11 +62,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     return commands;
   }
 
-  getPath() {
+  public getPath() {
     return this.state.path;
   }
 
-  setPath(path: string, newLine?: boolean) {
+  public setPath(path: string, newLine?: boolean) {
     if (newLine) {
       this.print('');
       this.performPrint();
@@ -74,11 +76,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     });
   }
 
-  getUser() {
+  public getUser() {
     return this.state.user;
   }
 
-  setUser(user: string, newLine?: boolean) {
+  public setUser(user: string, newLine?: boolean) {
     if (newLine) {
       this.print('');
       this.performPrint();
@@ -86,6 +88,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.setState({
       user: user
     });
+  }
+
+  private ScrollToBottom() {
+    if (this.container)
+    this.container.scrollIntoView({behavior: 'smooth'});
   }
 
   private keyDownHandler = (e: KeyboardEvent) => {
@@ -100,22 +107,23 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   };
 
   private RegisterPlugins(): void {
-    this.keydownHandlers['Enter'] = [() => {
-      const [cmd, ...args] = this.getInputValue().split(' ');
-      if (this.commandHanlers.hasOwnProperty(cmd)) {
-        const handlers = this.commandHanlers[cmd];
-        handlers.forEach((f) => {
-          f(args);
-        })
-      } else if (cmd.length == 0) {
-        if (this.commandHanlers.hasOwnProperty('_Empty')) 
-          this.commandHanlers['_Empty'].forEach((f) => f(args));
-        if (this.commandHanlers.hasOwnProperty(''))
-          this.commandHanlers[''].forEach((f) => f(args));
-      } else if (this.commandHanlers.hasOwnProperty('_Default')) {
-        this.commandHanlers['_Default'].forEach((f) => f(args));
+    this.keydownHandlers['Enter'] = [
+        () => {
+        const [cmd, ...args] = this.getInputValue().split(' ');
+        if (this.commandHanlers.hasOwnProperty(cmd)) {
+          const handlers = this.commandHanlers[cmd];
+          handlers.forEach((f) => {
+            f(args);
+          })
+        } else if (cmd.length == 0) {
+          if (this.commandHanlers.hasOwnProperty('_Empty')) 
+            this.commandHanlers['_Empty'].forEach((f) => f(args));
+          if (this.commandHanlers.hasOwnProperty(''))
+            this.commandHanlers[''].forEach((f) => f(args));
+        } else if (this.commandHanlers.hasOwnProperty('_Default')) {
+          this.commandHanlers['_Default'].forEach((f) => f(args));
+        }
       }
-    }
     ];
     this.props.plugins.forEach((plugin) => {
       const instance = new plugin(this);
@@ -163,7 +171,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       });
       return (
         <div className="Console-ioline" key={i}>
-          <div>{o.in}</div>
+          <div className="Console-input">{o.in}</div>
           <div className="Console-output">{outdata}</div>
         </div>
       )
@@ -173,7 +181,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         <div className="Console-iopanel">
           {paneldata}
         </div>
-        <div className="Console-inputline">
+        <div className="Console-inputline" ref={el => {this.container = el}}>
           {this.getPrompt()}
           <input id="Console-inputelement"
                  autoFocus={true}
