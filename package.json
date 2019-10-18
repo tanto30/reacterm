@@ -1,6 +1,6 @@
 {
   "name": "reacterm",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "React component to render a terminal with plugin based functionality",
   "author": "tanto30",
   "license": "MIT",
@@ -53,5 +53,6 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "keywords": ["react", "terminal", "plugins", "console"]
 }
