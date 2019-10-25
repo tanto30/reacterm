@@ -11,6 +11,9 @@ export interface ITerminal {
   setUser: (user: string, newLine?: boolean) => void;
   performPrint: () => void;
   printAndFlush: printFunc;
+  startAutoFocus: () => void;
+  stopAutoFocus: () => void;
+  printJSX: (jsx: JSX.Element) => void;
 }
 
 export abstract class AbsTerminalPlugin {

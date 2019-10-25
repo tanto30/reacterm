@@ -13,10 +13,6 @@ export class BasePlugin extends AbsTerminalPlugin {
     funcs.forEach(n => this.newCommand(n, this[n]));
   }
 
-  _Empty() {
-    this.term.print('');
-  }
-
   _Default() {
     this.term.print('Command not found');
   }

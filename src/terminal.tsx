@@ -39,6 +39,10 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.printAggregation.push(<span style={style} key={this.printAggregation.length}>{val + end}</span>);
   }
 
+  public printJSX(jsx: JSX.Element) {
+    this.printAggregation.push(<div key={this.printAggregation.length}>{jsx}</div>);
+  }
+
   public performPrint() {
     if (this.printAggregation.length > 0) {
       this.setState(prev => ({
@@ -97,6 +101,14 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.performPrint();
   }
 
+  public startAutoFocus() {
+    document.addEventListener('click', this._documentClickHandler);
+  }
+
+  public stopAutoFocus() {
+    document.removeEventListener('click', this._documentClickHandler);
+  }
+
   private ScrollToBottom() {
     if (this.container)
     this.container.scrollIntoView({behavior: 'smooth'});
@@ -114,6 +126,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   };
 
   private RegisterPlugins(): void {
+    this.commandHanlers[''] = [
+      () => {
+        this.print();
+      }
+    ];
     this.keydownHandlers['Enter'] = [
         () => {
         const [cmd, ...args] = this.getInputValue().split(' ');
@@ -125,8 +142,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         } else if (cmd.length == 0) {
           if (this.commandHanlers.hasOwnProperty('_Empty'))
             this.commandHanlers['_Empty'].forEach((f) => f(args));
-          if (this.commandHanlers.hasOwnProperty(''))
-            this.commandHanlers[''].forEach((f) => f(args));
+          this.commandHanlers[''].forEach((f) => f(args));
         } else if (this.commandHanlers.hasOwnProperty('_Default')) {
           this.commandHanlers['_Default'].forEach((f) => f(args));
         }
@@ -156,14 +172,15 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     });
   }
 
+  private _documentClickHandler() {
+    const ie = document.getElementById('Console-inputelement');
+    if (ie)
+      ie.focus();
+  }
+
   componentDidMount(): void {
     document.addEventListener('keydown', this.keyDownHandler);
-    document.addEventListener('click', () => {
-      const ie = document.getElementById('Console-inputelement');
-      if (ie) {
-        ie.focus();
-      }
-    });
+    this.startAutoFocus();
     this.RegisterPlugins();
   }
 
