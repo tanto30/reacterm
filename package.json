@@ -54,5 +54,10 @@
   "files": [
     "dist"
   ],
-  "keywords": ["react", "terminal", "plugins", "console"]
+  "keywords": [
+    "react",
+    "terminal",
+    "plugins",
+    "console"
+  ]
 }

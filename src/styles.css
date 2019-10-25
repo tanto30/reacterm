@@ -29,9 +29,27 @@
   margin-top: 5px;
   margin-bottom: 10px;
   display: block;
+  white-space: pre-wrap;
+  line-height: 20px;
 }
 
 .Console-input {
   word-wrap: break-word;
   word-break: break-all;
+}
+
+progress {
+  border-radius: 2px;
+  width: 80%;
+  height: 22px;
+}
+progress::-webkit-progress-bar {
+  background-color: #0091EA;
+  border-radius: 2px;
+}
+progress::-webkit-progress-value {
+  border-radius: 2px;
+}
+progress::-moz-progress-bar {
+  /* style rules */
 }

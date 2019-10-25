@@ -7,7 +7,7 @@ export type ConsoleProps = {
 };
 export type ConsoleState = {
   inputValue: string,
-  ioData: { in: string, out: string[] }[],
+  ioData: { in: string, out: JSX.Element[] }[],
   user: string,
   path: string
 };
@@ -17,7 +17,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   private pluginsInUse: AbsTerminalPlugin[] = [];
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
   private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
-  private printAggregation: string[] = [];
+  private printAggregation: JSX.Element[] = [];
   private container: HTMLDivElement | null;
 
   constructor(props: ConsoleProps) {
@@ -33,15 +33,17 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.setState({inputValue: val});
   }
 
-  public print(val?: string) {
-    this.printAggregation.push(val ? val: '');
+  public print(val = '', end = '\n', style = {}) {
+    if (val === '' && end === '\n')
+      end = '';
+    this.printAggregation.push(<span style={style} key={this.printAggregation.length}>{val + end}</span>);
   }
 
   public performPrint() {
     if (this.printAggregation.length > 0) {
       this.setState(prev => ({
         inputValue: '',
-        ioData: [...prev.ioData, {in: this.getPrompt() + prev.inputValue, out: this.printAggregation.slice()}]
+        ioData: [...prev.ioData, {in: this.getPrompt() + prev.inputValue, out: this.printAggregation}]
       }));
       this.printAggregation = [];
     }
@@ -90,7 +92,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     });
   }
 
-  printAndFlush(val: string) {
+  public printAndFlush(val: string) {
     this.print(val);
     this.performPrint();
   }
@@ -121,7 +123,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
             f(args);
           })
         } else if (cmd.length == 0) {
-          if (this.commandHanlers.hasOwnProperty('_Empty')) 
+          if (this.commandHanlers.hasOwnProperty('_Empty'))
             this.commandHanlers['_Empty'].forEach((f) => f(args));
           if (this.commandHanlers.hasOwnProperty(''))
             this.commandHanlers[''].forEach((f) => f(args));
@@ -171,13 +173,10 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
 
   render() {
     const paneldata = this.state.ioData.map((o, i) => {
-      const outdata = o.out.map((v, i) => {
-        return (<div key={i}>{v}</div>);
-      });
       return (
         <div className="Console-ioline" key={i}>
           <div className="Console-input">{o.in}</div>
-          <div className="Console-output">{outdata}</div>
+          <div className="Console-output">{o.out}</div>
         </div>
       )
     });

@@ -16,11 +16,11 @@ export class BasePlugin extends AbsTerminalPlugin {
   _Empty() {
     this.term.print('');
   }
- 
+
   _Default() {
     this.term.print('Command not found');
   }
-  
+
   help() {
     let commands = this.term.getAllCommands();
     this.term.print(commands.join(' '));
