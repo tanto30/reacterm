@@ -1,6 +1,6 @@
 import * as React from 'react';
 import "./styles.css";
-import {ITerminal, AbsTerminalPlugin} from "./plugins";
+import {AbsTerminalPlugin, ITerminal} from "./plugins";
 
 export type ConsoleProps = {
   plugins: ITerminalPluginClass[]
@@ -21,6 +21,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
   private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
   private container: HTMLDivElement | null;
+  private inputElement: HTMLInputElement | null;
 
   constructor(props: ConsoleProps) {
     super(props);
@@ -65,9 +66,9 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   }
 
   public moveCursorToEnd() {
-    const ie = document.getElementById('Console-inputelement') as HTMLInputElement;
     setTimeout(() => {
-      ie.setSelectionRange(10000, 10000)
+      if (this.inputElement)
+        this.inputElement.setSelectionRange(10000, 10000)
     }, 0);
   }
 
@@ -92,13 +93,14 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.setState({pluginTookControl: false});
     this.performPrint();
     this.enableEnterPress();
+    this._documentClickHandler();
   }
 
   public getPath() {
     return this.state.path;
   }
 
-  public setPath(path: string, newLine?: boolean) {
+  public setPath(path: string, newLine = true) {
     if (newLine) {
       this.print('');
       this.performPrint();
@@ -112,7 +114,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     return this.state.user;
   }
 
-  public setUser(user: string, newLine?: boolean) {
+  public setUser(user: string, newLine = true) {
     if (newLine) {
       this.print('');
       this.performPrint();
@@ -135,9 +137,59 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     document.removeEventListener('click', this._documentClickHandler);
   }
 
+  public disableEnterPress() {
+    this.disableEnter = true;
+  }
+
+  public enableEnterPress() {
+    this.disableEnter = false;
+  }
+
+  componentDidMount(): void {
+    document.addEventListener('keydown', this.keyDownHandler);
+    this.startAutoFocus();
+    this.RegisterPlugins();
+  }
+
+  render() {
+    const paneldata = this.state.ioData.map((o, i) => {
+      return (
+        <div className="Console-ioline" key={i}>
+          <div className="Console-input">{o.in}</div>
+          <div className="Console-output">{o.out}</div>
+        </div>
+      )
+    });
+    return (
+      <div className="Console-container">
+        <div className="Console-iopanel">
+          {paneldata}
+        </div>
+        <div className="Console-inputline" ref={el => {
+          this.container = el
+        }}>
+          {this.getPrompt()}
+          <input
+            ref={el => {
+              this.inputElement = el
+            }}
+            className={"Console-inputelement"}
+            autoFocus={true}
+            autoComplete="off"
+            value={this.state.inputValue}
+            onChange={e => this.setState({inputValue: e.target.value})}
+            disabled={this.state.pluginTookControl}/>
+        </div>
+        <div className="Console-output">
+          {this.state.printAggregation}
+        </div>
+      </div>
+    );
+  }
+
   private ScrollToBottom() {
     if (this.container)
-    this.container.scrollIntoView({behavior: 'smooth'});
+      this.container.scrollIntoView({behavior: 'smooth'});
   }
 
   private keyDownHandler = (e: KeyboardEvent) => {
@@ -152,14 +204,6 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     }
   };
 
-  public disableEnterPress() {
-    this.disableEnter = true;
-  }
-
-  public enableEnterPress() {
-    this.disableEnter = false;
-  }
-
   private RegisterPlugins(): void {
     this.commandHanlers[''] = [
       () => {
@@ -167,7 +211,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       }
     ];
     this.keydownHandlers['Enter'] = [
-        () => {
+      () => {
         const [cmd, ...args] = this.getInputValue().split(' ');
         if (this.commandHanlers.hasOwnProperty(cmd)) {
           const handlers = this.commandHanlers[cmd];
@@ -181,8 +225,8 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         } else if (this.commandHanlers.hasOwnProperty('_Default')) {
           this.commandHanlers['_Default'].forEach((f) => f(args));
         }
-          if (!this.state.pluginTookControl)
-            this.performPrint();
+        if (!this.state.pluginTookControl)
+          this.performPrint();
       }
     ];
     this.props.plugins.forEach((plugin) => {
@@ -209,50 +253,13 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     });
   }
 
-  private _documentClickHandler() {
-    const ie = document.getElementById('Console-inputelement');
-    if (ie)
-      ie.focus();
-  }
-
-  componentDidMount(): void {
-    document.addEventListener('keydown', this.keyDownHandler);
-    this.startAutoFocus();
-    this.RegisterPlugins();
-  }
+  private _documentClickHandler = () => {
+    if (this.inputElement)
+      this.inputElement.focus();
+  };
 
   private getPrompt() {
     return this.state.user + '@WEB:' + this.state.path + '> ';
-  }
-
-  render() {
-    const paneldata = this.state.ioData.map((o, i) => {
-      return (
-        <div className="Console-ioline" key={i}>
-          <div className="Console-input">{o.in}</div>
-          <div className="Console-output">{o.out}</div>
-        </div>
-      )
-    });
-    return (
-      <div className="Console-container">
-        <div className="Console-iopanel">
-          {paneldata}
-        </div>
-        <div className="Console-inputline" ref={el => {this.container = el}}>
-          {this.getPrompt()}
-          <input id="Console-inputelement"
-                 autoFocus={true}
-                 autoComplete="off"
-                 value={this.state.inputValue}
-                 onChange={e => this.setState({inputValue: e.target.value})}
-                 disabled={this.state.pluginTookControl}/>
-        </div>
-        <div className="Console-output">
-          {this.state.printAggregation}
-        </div>
-      </div>
-    );
   }
 }
 

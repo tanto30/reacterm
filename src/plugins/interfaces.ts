@@ -1,3 +1,5 @@
+import * as React from "react";
+
 type printFunc = (val?: string, end?: string, style?: React.CSSProperties) => void;
 export interface ITerminal {
   setPath: (path: string, newLine?: boolean) => void;

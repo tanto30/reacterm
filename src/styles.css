@@ -10,7 +10,7 @@
   white-space: pre-wrap;
 }
 
-#Console-inputelement {
+.Console-inputelement {
   background-color: transparent;
   font: inherit;
   color: white;
