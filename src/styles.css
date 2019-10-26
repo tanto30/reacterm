@@ -7,6 +7,7 @@
   width: calc(100% - 40px);
   overflow-x: hidden;
   padding: 20px;
+  white-space: pre-wrap;
 }
 
 #Console-inputelement {
@@ -17,7 +18,6 @@
   outline: none;
   overflow: hidden;
   flex: 1 1 auto;
-  margin-left: 7px;
 }
 
 .Console-inputline {
@@ -29,7 +29,6 @@
   margin-top: 5px;
   margin-bottom: 10px;
   display: block;
-  white-space: pre-wrap;
   line-height: 20px;
 }
 
@@ -38,18 +37,22 @@
   word-break: break-all;
 }
 
-progress {
-  border-radius: 2px;
-  width: 80%;
-  height: 22px;
+.Console-ioline {
+  pointer-events: none;
 }
-progress::-webkit-progress-bar {
-  background-color: #0091EA;
-  border-radius: 2px;
-}
-progress::-webkit-progress-value {
-  border-radius: 2px;
-}
-progress::-moz-progress-bar {
-  /* style rules */
-}
+
+/*progress {*/
+/*  border-radius: 2px;*/
+/*  width: 80%;*/
+/*  height: 22px;*/
+/*}*/
+/*progress::-webkit-progress-bar {*/
+/*  background-color: #0091EA;*/
+/*  border-radius: 2px;*/
+/*}*/
+/*progress::-webkit-progress-value {*/
+/*  border-radius: 2px;*/
+/*}*/
+/*progress::-moz-progress-bar {*/
+/*  !* style rules *!*/
+/*}*/

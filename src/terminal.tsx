@@ -5,24 +5,26 @@ import {ITerminal, AbsTerminalPlugin} from "./plugins";
 export type ConsoleProps = {
   plugins: ITerminalPluginClass[]
 };
-export type ConsoleState = {
+type ConsoleState = {
   inputValue: string,
   ioData: { in: string, out: JSX.Element[] }[],
+  printAggregation: JSX.Element[],
+  pluginTookControl: boolean,
   user: string,
   path: string
 };
 type ITerminalPluginClass = new (term: ITerminal) => AbsTerminalPlugin;
 
 class Terminal extends React.Component<ConsoleProps, ConsoleState> implements ITerminal {
+  private disableEnter: boolean = false;
   private pluginsInUse: AbsTerminalPlugin[] = [];
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
   private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
-  private printAggregation: JSX.Element[] = [];
   private container: HTMLDivElement | null;
 
   constructor(props: ConsoleProps) {
     super(props);
-    this.state = {inputValue: '', ioData: [], user: '', path: ''};
+    this.state = {inputValue: '', ioData: [], user: '', path: '', printAggregation: [], pluginTookControl: false};
   }
 
   public getInputValue() {
@@ -36,20 +38,28 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   public print(val = '', end = '\n', style = {}) {
     if (val === '' && end === '\n')
       end = '';
-    this.printAggregation.push(<span style={style} key={this.printAggregation.length}>{val + end}</span>);
+    let jsx = <span style={style} key={this.state.printAggregation.length}>{val + end}</span>;
+    this.setState(prev => ({
+      printAggregation: [...prev.printAggregation, jsx]
+    }));
+    this.ScrollToBottom();
   }
 
   public printJSX(jsx: JSX.Element) {
-    this.printAggregation.push(<div key={this.printAggregation.length}>{jsx}</div>);
+    let j = <div key={this.state.printAggregation.length}>{jsx}</div>;
+    this.setState(prev => ({
+      printAggregation: [...prev.printAggregation, j]
+    }));
+    this.ScrollToBottom();
   }
 
   public performPrint() {
-    if (this.printAggregation.length > 0) {
+    if (this.state.printAggregation.length > 0) {
       this.setState(prev => ({
         inputValue: '',
-        ioData: [...prev.ioData, {in: this.getPrompt() + prev.inputValue, out: this.printAggregation}]
+        ioData: [...prev.ioData, {in: this.getPrompt() + prev.inputValue, out: prev.printAggregation}],
+        printAggregation: []
       }));
-      this.printAggregation = [];
     }
     this.ScrollToBottom();
   }
@@ -63,9 +73,25 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
 
   public getAllCommands() {
     const commands = Object.keys(this.commandHanlers);
-    commands.splice(commands.indexOf('_Default'), 1);
-    commands.splice(commands.indexOf('_Empty'), 1);
+    let di, ei, emi;
+    di = commands.indexOf('_Default');
+    ei = commands.indexOf('_Empty');
+    emi = commands.indexOf('');
+    if (di != -1) commands.splice(di, 1);
+    if (ei != -1) commands.splice(ei, 1);
+    if (emi != -1) commands.splice(emi, 1);
     return commands;
+  }
+
+  public takeControl() {
+    this.setState({pluginTookControl: true});
+    this.disableEnterPress();
+  }
+
+  public releaseControl() {
+    this.setState({pluginTookControl: false});
+    this.performPrint();
+    this.enableEnterPress();
   }
 
   public getPath() {
@@ -115,6 +141,8 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   }
 
   private keyDownHandler = (e: KeyboardEvent) => {
+    if (e.key === 'Enter' && this.disableEnter)
+      return;
     if (this.keydownHandlers.hasOwnProperty(e.key)) {
       const handlers = this.keydownHandlers[e.key];
       e.preventDefault();
@@ -122,8 +150,15 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         f();
       });
     }
-    this.performPrint();
   };
+
+  public disableEnterPress() {
+    this.disableEnter = true;
+  }
+
+  public enableEnterPress() {
+    this.disableEnter = false;
+  }
 
   private RegisterPlugins(): void {
     this.commandHanlers[''] = [
@@ -146,6 +181,8 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         } else if (this.commandHanlers.hasOwnProperty('_Default')) {
           this.commandHanlers['_Default'].forEach((f) => f(args));
         }
+          if (!this.state.pluginTookControl)
+            this.performPrint();
       }
     ];
     this.props.plugins.forEach((plugin) => {
@@ -208,7 +245,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
                  autoFocus={true}
                  autoComplete="off"
                  value={this.state.inputValue}
-                 onChange={e => this.setState({inputValue: e.target.value})}/>
+                 onChange={e => this.setState({inputValue: e.target.value})}
+                 disabled={this.state.pluginTookControl}/>
+        </div>
+        <div className="Console-output">
+          {this.state.printAggregation}
         </div>
       </div>
     );

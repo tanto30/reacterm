@@ -1,26 +1,31 @@
 type printFunc = (val?: string, end?: string, style?: React.CSSProperties) => void;
 export interface ITerminal {
-  getInputValue: () => string;
-  setInputValue: (val: string) => void;
-  print: printFunc;
-  moveCursorToEnd: () => void;
-  getAllCommands: () => string[];
-  getPath: () => string;
   setPath: (path: string, newLine?: boolean) => void;
-  getUser: () => string;
   setUser: (user: string, newLine?: boolean) => void;
-  performPrint: () => void;
-  printAndFlush: printFunc;
-  startAutoFocus: () => void;
-  stopAutoFocus: () => void;
   printJSX: (jsx: JSX.Element) => void;
+  setInputValue: (val: string) => void;
+  getAllCommands: () => string[];
+  getInputValue: () => string;
+  getUser: () => string;
+  getPath: () => string;
+  disableEnterPress: () => void;
+  enableEnterPress: () => void;
+  moveCursorToEnd: () => void;
+  startAutoFocus: () => void;
+  releaseControl: () => void;
+  stopAutoFocus: () => void;
+  performPrint: () => void;
+  takeControl: () => void;
+  printAndFlush: printFunc;
+  print: printFunc;
 }
 
 export abstract class AbsTerminalPlugin {
   protected term: ITerminal;
-  public commands: {[key: string]: (args: string[]) => void} = {};
+  public commands: { [key: string]: (args: string[]) => void } = {};
   public keyedowns: {[key: string]: () => void} = {};
-  constructor(term: ITerminal) {
+
+  public constructor(term: ITerminal) {
     this.term = term;
   }
 
