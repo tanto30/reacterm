@@ -153,7 +153,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   }
 
   public disableKeydownPreventDefault() {
-    this.disableKeydownPD = false;
+    this.disableKeydownPD = true;
   }
 
 
