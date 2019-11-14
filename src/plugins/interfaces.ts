@@ -10,6 +10,8 @@ export interface ITerminal {
   getInputValue: () => string;
   getUser: () => string;
   getPath: () => string;
+  disableKeydownPreventDefault: () => void;
+  enableKeydownPreventDefault: () => void;
   disableEnterPress: () => void;
   enableEnterPress: () => void;
   moveCursorToEnd: () => void;

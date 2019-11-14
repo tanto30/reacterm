@@ -17,9 +17,10 @@ type ITerminalPluginClass = new (term: ITerminal) => AbsTerminalPlugin;
 
 class Terminal extends React.Component<ConsoleProps, ConsoleState> implements ITerminal {
   private disableEnter: boolean = false;
+  private disableKeydownPD = false;
   private pluginsInUse: AbsTerminalPlugin[] = [];
   private keydownHandlers: { [key: string]: (() => void)[] } = {};
-  private commandHanlers: { [key: string]: ((args: string[]) => void)[] } = {};
+  private commandHandlers: { [key: string]: ((args: string[]) => void)[] } = {};
   private container: HTMLDivElement | null;
   private inputElement: HTMLInputElement | null;
 
@@ -73,7 +74,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   }
 
   public getAllCommands() {
-    const commands = Object.keys(this.commandHanlers);
+    const commands = Object.keys(this.commandHandlers);
     let di, ei, emi;
     di = commands.indexOf('_Default');
     ei = commands.indexOf('_Empty');
@@ -87,6 +88,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   public takeControl() {
     this.setState({pluginTookControl: true});
     this.disableEnterPress();
+    this.disableKeydownPreventDefault();
   }
 
   public releaseControl() {
@@ -94,6 +96,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.performPrint();
     this.enableEnterPress();
     this._documentClickHandler();
+    this.enableKeydownPreventDefault();
   }
 
   public getPath() {
@@ -144,6 +147,15 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   public enableEnterPress() {
     this.disableEnter = false;
   }
+
+  public enableKeydownPreventDefault() {
+    this.disableKeydownPD = false;
+  }
+
+  public disableKeydownPreventDefault() {
+    this.disableKeydownPD = false;
+  }
+
 
   componentDidMount(): void {
     document.addEventListener('keydown', this.keyDownHandler);
@@ -197,7 +209,9 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       return;
     if (this.keydownHandlers.hasOwnProperty(e.key)) {
       const handlers = this.keydownHandlers[e.key];
-      e.preventDefault();
+      if (!this.disableKeydownPD) {
+        e.preventDefault();
+      }
       handlers.forEach((f) => {
         f();
       });
@@ -205,7 +219,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   };
 
   private RegisterPlugins(): void {
-    this.commandHanlers[''] = [
+    this.commandHandlers[''] = [
       () => {
         this.print();
       }
@@ -213,17 +227,17 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     this.keydownHandlers['Enter'] = [
       () => {
         const [cmd, ...args] = this.getInputValue().split(' ');
-        if (this.commandHanlers.hasOwnProperty(cmd)) {
-          const handlers = this.commandHanlers[cmd];
+        if (this.commandHandlers.hasOwnProperty(cmd)) {
+          const handlers = this.commandHandlers[cmd];
           handlers.forEach((f) => {
             f(args);
           })
         } else if (cmd.length == 0) {
-          if (this.commandHanlers.hasOwnProperty('_Empty'))
-            this.commandHanlers['_Empty'].forEach((f) => f(args));
-          this.commandHanlers[''].forEach((f) => f(args));
-        } else if (this.commandHanlers.hasOwnProperty('_Default')) {
-          this.commandHanlers['_Default'].forEach((f) => f(args));
+          if (this.commandHandlers.hasOwnProperty('_Empty'))
+            this.commandHandlers['_Empty'].forEach((f) => f(args));
+          this.commandHandlers[''].forEach((f) => f(args));
+        } else if (this.commandHandlers.hasOwnProperty('_Default')) {
+          this.commandHandlers['_Default'].forEach((f) => f(args));
         }
         if (!this.state.pluginTookControl)
           this.performPrint();
@@ -243,10 +257,10 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
       }
       for (let command in instance.commands) {
         if (instance.commands.hasOwnProperty(command)) {
-          if (this.commandHanlers.hasOwnProperty(command)) {
-            this.commandHanlers[command].push(instance.commands[command]);
+          if (this.commandHandlers.hasOwnProperty(command)) {
+            this.commandHandlers[command].push(instance.commands[command]);
           } else {
-            this.commandHanlers[command] = [instance.commands[command]];
+            this.commandHandlers[command] = [instance.commands[command]];
           }
         }
       }
