@@ -6,7 +6,7 @@ import {
   HistoryPlugin,
   AbsTerminalPlugin,
   ITerminal
-} from "./plugins";
+} from "./Plugins";
 
 export {
   Terminal,

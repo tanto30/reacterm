@@ -1,7 +1,7 @@
-import Terminal from './'
+import ExampleComponent from './'
 
-describe('Terminal', () => {
+describe('ExampleComponent', () => {
   it('is truthy', () => {
-    expect(Terminal).toBeTruthy()
+    expect(ExampleComponent).toBeTruthy()
   })
-});
+})

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import "./styles.css";
-import {AbsTerminalPlugin, ITerminal} from "./plugins";
+import {AbsTerminalPlugin, ITerminal} from "./Plugins";
 
 export type ConsoleProps = {
   plugins: ITerminalPluginClass[]
 };
 type ConsoleState = {
   inputValue: string,
-  ioData: { in: string, out: JSX.Element[] }[],
+  ioData: JSX.Element[],
   printAggregation: JSX.Element[],
   pluginTookControl: boolean,
   user: string,
@@ -59,7 +59,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
     if (this.state.printAggregation.length > 0) {
       this.setState(prev => ({
         inputValue: '',
-        ioData: [...prev.ioData, {in: this.getPrompt() + prev.inputValue, out: prev.printAggregation}],
+        ioData: [...prev.ioData, ...prev.printAggregation],
         printAggregation: []
       }));
     }
@@ -166,34 +166,30 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   render() {
     const paneldata = this.state.ioData.map((o, i) => {
       return (
-        <div className="Console-ioline" key={i}>
-          <div className="Console-input">{o.in}</div>
-          <div className="Console-output">{o.out}</div>
-        </div>
+        <div className="Console-ioline" key={i}>{o}</div>
       )
     });
     return (
       <div className="Console-container">
         <div className="Console-iopanel">
           {paneldata}
+          <div >
+            {this.state.printAggregation}
+          </div>
         </div>
-        <div className="Console-inputline" ref={el => {
-          this.container = el
-        }}>
-          {this.getPrompt()}
-          <input
-            ref={el => {
-              this.inputElement = el
-            }}
-            className={"Console-inputelement"}
-            autoFocus={true}
-            autoComplete="off"
-            value={this.state.inputValue}
-            onChange={e => this.setState({inputValue: e.target.value})}
-            disabled={this.state.pluginTookControl}/>
-        </div>
-        <div className="Console-output">
-          {this.state.printAggregation}
+        <div className="Console-inputline" ref={el => {this.container = el}}>
+          {this.state.pluginTookControl ? null :
+            [this.getPrompt(),
+              <input
+                ref={el => {
+                  this.inputElement = el
+                }}
+                className={"Console-inputelement"}
+                autoFocus={true}
+                autoComplete="off"
+                value={this.state.inputValue}
+                onChange={e => this.setState({inputValue: e.target.value})}
+                disabled={this.state.pluginTookControl}/>]}
         </div>
       </div>
     );
@@ -221,11 +217,11 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   private RegisterPlugins(): void {
     this.commandHandlers[''] = [
       () => {
-        this.print();
       }
     ];
     this.keydownHandlers['Enter'] = [
       () => {
+        this.print(this.getPrompt() + this.getInputValue());
         const [cmd, ...args] = this.getInputValue().split(' ');
         if (this.commandHandlers.hasOwnProperty(cmd)) {
           const handlers = this.commandHandlers[cmd];
@@ -239,8 +235,6 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
         } else if (this.commandHandlers.hasOwnProperty('_Default')) {
           this.commandHandlers['_Default'].forEach((f) => f(args));
         }
-        if (!this.state.pluginTookControl)
-          this.performPrint();
       }
     ];
     this.props.plugins.forEach((plugin) => {
