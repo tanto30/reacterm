@@ -35,9 +35,10 @@
 .Console-input {
   word-wrap: break-word;
   word-break: break-all;
+  white-space: pre-line;
 }
 
-.Console-ioline {
+.Console-disabled {
   pointer-events: none;
 }
 

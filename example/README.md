@@ -133,14 +133,14 @@ my-app/
     App.js
     App.test.js
     index.css
-    index.js
+    index.ts
     logo.svg
 ```
 
 For the project to build, **these files must exist with exact filenames**:
 
 * `public/index.html` is the page template;
-* `src/index.js` is the JavaScript entry point.
+* `src/index.ts` is the JavaScript entry point.
 
 You can delete or rename the other files.
 
@@ -231,7 +231,7 @@ You would need to install an ESLint plugin for your editor first. Then, add a fi
 
 ```js
 {
-  "extends": "react-app"
+  "extends";: "react-app"
 }
 ```
 
@@ -491,7 +491,7 @@ class Button extends Component {
 
 In development, expressing dependencies this way allows your styles to be reloaded on the fly as you edit them. In production, all CSS files will be concatenated into a single minified `.css` file in the build output.
 
-If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.js`, but you could always remove that import if you later migrate to a different build tool.
+If you are concerned about using Webpack-specific semantics, you can put all your CSS right into `src/index.css`. It would still be imported from `src/index.ts`, but you could always remove that import if you later migrate to a different build tool.
 
 ## Post-Processing CSS
 
@@ -698,7 +698,7 @@ When you run `npm run build`, Create React App will substitute `%PUBLIC_URL%` wi
 In JavaScript code, you can use `process.env.PUBLIC_URL` for similar purposes:
 
 ```js
-render() {
+render(); {
   // Note: this is an escape hatch and should be used sparingly!
   // Normally we recommend using `import` for getting asset URLs
   // as described in “Adding Images and Fonts” above this section.
@@ -754,7 +754,7 @@ Alternatively you may use `yarn`:
 yarn add react-bootstrap bootstrap@3
 ```
 
-Import Bootstrap CSS and optionally Bootstrap theme CSS in the beginning of your ```src/index.js``` file:
+Import Bootstrap CSS and optionally Bootstrap theme CSS in the beginning of your ```src/index.ts``` file:
 
 ```js
 import 'bootstrap/dist/css/bootstrap.css';
@@ -980,7 +980,7 @@ Such setup is **not** required. However, if you **do** have a setup like this, i
 To tell the development server to proxy any unknown requests to your API server in development, add a `proxy` field to your `package.json`, for example:
 
 ```js
-  "proxy": "http://localhost:4000",
+  "proxy";: "http://localhost:4000",
 ```
 
 This way, when you `fetch('/api/todos')` in development, the development server will recognize that it’s not a static asset, and will proxy your request to `http://localhost:4000/api/todos` as a fallback. The development server will only attempt to send requests without a `text/html` accept header to the proxy.
@@ -1035,10 +1035,10 @@ You may also specify any configuration value [`http-proxy-middleware`](https://g
 ```js
 {
   // ...
-  "proxy": {
-    "/api": {
-      "target": "<url>",
-      "ws": true
+  "proxy";: {
+    "/api";: {
+      "target";: "<url>",
+      "ws";: true
       // ...
     }
   }
@@ -1053,30 +1053,30 @@ You may also narrow down matches using `*` and/or `**`, to match the path exactl
 ```js
 {
   // ...
-  "proxy": {
+  "proxy";: {
     // Matches any request starting with /api
-    "/api": {
-      "target": "<url_1>",
-      "ws": true
+    "/api";: {
+      "target";: "<url_1>",
+      "ws";: true
       // ...
     },
     // Matches any request starting with /foo
-    "/foo": {
-      "target": "<url_2>",
-      "ssl": true,
-      "pathRewrite": {
-        "^/foo": "/foo/beta"
+    "/foo";: {
+      "target";: "<url_2>",
+      "ssl";: true,
+      "pathRewrite";: {
+        "^/foo";: "/foo/beta"
       }
       // ...
     },
     // Matches /bar/abc.html but not /bar/sub/def.html
-    "/bar/*.html": {
-      "target": "<url_3>",
+    "/bar/*.html";: {
+      "target";: "<url_3>",
       // ...
     },
     // Matches /baz/abc.html and /baz/sub/def.html
-    "/baz/**/*.html": {
-      "target": "<url_4>"
+    "/baz/**/*.html";: {
+      "target";: "<url_4>"
       // ...
     }
   }
@@ -1099,14 +1099,14 @@ Either way, you can proxy WebSocket requests manually in `package.json`:
 ```js
 {
   // ...
-  "proxy": {
-    "/socket": {
+  "proxy";: {
+    "/socket";: {
       // Your compatible WebSocket server
-      "target": "ws://<socket_url>",
+      "target";: "ws://<socket_url>",
       // Tell http-proxy-middleware that this is a WebSocket proxy.
       // Also allows you to proxy WebSocket requests without an additional HTTP request
       // https://github.com/chimurai/http-proxy-middleware#external-websocket-upgrade
-      "ws": true
+      "ws";: true
       // ...
     }
   }
@@ -1169,7 +1169,7 @@ You can read more about [zero-configuration pre-rendering (also called snapshott
 Similarly to the previous section, you can leave some placeholders in the HTML that inject global variables, for example:
 
 ```js
-<!doctype html>
+<;!doctype html>
 <html lang="en">
   <head>
     <script>
@@ -1439,10 +1439,10 @@ The build command will check for linter warnings and fail if any are found.
 By default, the `package.json` of the generated project looks like this:
 
 ```js
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom"
+  "scripts";: {
+    "start";: "react-scripts start",
+    "build";: "react-scripts build",
+    "test";: "react-scripts test --env=jsdom";
 ```
 
 If you know that none of your tests depend on [jsdom](https://github.com/tmpvar/jsdom), you can safely remove `--env=jsdom`, and your tests will run faster:
@@ -1582,12 +1582,12 @@ that your web app is reliably fast, even on a slow or unreliable network.
 
 If you would prefer not to enable service workers prior to your initial
 production deployment, then remove the call to `serviceWorkerRegistration.register()`
-from [`src/index.js`](src/index.js).
+from [`src/index.ts`](src/index.js).
 
 If you had previously enabled service workers in your production deployment and
 have decided that you would like to disable them for all your existing users,
 you can swap out the call to `serviceWorkerRegistration.register()` in
-[`src/index.js`](src/index.js) with a call to `serviceWorkerRegistration.unregister()`.
+[`src/index.ts`](src/index.js) with a call to `serviceWorkerRegistration.unregister()`.
 After the user visits a page that has `serviceWorkerRegistration.unregister()`,
 the service worker will be uninstalled. Note that depending on how `/service-worker.js` is served,
 it may take up to 24 hours for the cache to be invalidated.
@@ -1790,7 +1790,7 @@ By default, Create React App produces a build assuming your app is hosted at the
 To override this, specify the `homepage` in your `package.json`, for example:
 
 ```js
-  "homepage": "http://mywebsite.com/relativepath",
+  "homepage";: "http://mywebsite.com/relativepath",
 ```
 
 This will let Create React App correctly infer the root path to use in the generated HTML file.
@@ -1801,7 +1801,7 @@ More information [here](https://reacttraining.com/react-router/web/api/BrowserRo
 For example:
 ```js
 <BrowserRouter basename="/calendar"/>
-<Link to="/today"/> // renders <a href="/calendar/today">
+<Link; to="/today"/> // renders <a href="/calendar/today">
 ```
 
 #### Serving the Same Build from Different Paths
@@ -1811,7 +1811,7 @@ For example:
 If you are not using the HTML5 `pushState` history API or not using client-side routing at all, it is unnecessary to specify the URL from which your app will be served. Instead, you can put this in your `package.json`:
 
 ```js
-  "homepage": ".",
+  "homepage";: ".",
 ```
 
 This will make sure that all the asset paths are relative to `index.html`. You will then be able to move your app from `http://mywebsite.com` to `http://mywebsite.com/relativepath` or even `http://mywebsite.com/relative/path` without having to rebuild it.
@@ -1893,7 +1893,7 @@ For more information see [Add Firebase to your JavaScript Project](https://fireb
 Open your `package.json` and add a `homepage` field:
 
 ```js
-  "homepage": "https://myusername.github.io/my-app",
+  "homepage";: "https://myusername.github.io/my-app",
 ```
 
 Create React App uses the `homepage` field to determine the root URL in the built HTML file.
@@ -2078,7 +2078,7 @@ When you save a file while `npm start` is running, the browser should refresh wi
 If this doesn’t happen, try one of the following workarounds:
 
 * If your project is in a Dropbox folder, try moving it out.
-* If the watcher doesn’t see a file called `index.js` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/create-react-app/issues/1164) due to a Webpack bug.
+* If the watcher doesn’t see a file called `index.ts` and you’re referencing it by the folder name, you [need to restart the watcher](https://github.com/facebookincubator/create-react-app/issues/1164) due to a Webpack bug.
 * Some editors like Vim and IntelliJ have a “safe write” feature that currently breaks the watcher. You will need to disable it. Follow the instructions in [“Adjusting Your Text Editor”](https://webpack.js.org/guides/development/#adjusting-your-text-editor).
 * If your project path contains parentheses, try moving the project to a path without them. This is caused by a [Webpack watcher bug](https://github.com/webpack/watchpack/issues/42).
 * On Linux and macOS, you might need to [tweak system settings](https://webpack.github.io/docs/troubleshooting.html#not-enough-watchers) to allow more watchers.

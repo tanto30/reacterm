@@ -14,12 +14,7 @@ export class BasePlugin extends AbsTerminalPlugin {
   }
 
   _Default() {
-    this.term.takeControl();
-    this.term.print('Command not found\nsijosifj');
-    this.term.setUser('appsof');
-    this.term.print('adjiaodi');
-    //this.term.printJSX(<LoginForm submitCallback={() => {}} fields={[]}/>);
-    setTimeout(() => {this.term.print("isif"); this.term.releaseControl();}, 500);
+    this.term.print('Command not found');
   }
 
   help() {

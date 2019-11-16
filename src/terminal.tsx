@@ -8,14 +8,14 @@ export type ConsoleProps = {
 type ConsoleState = {
   inputValue: string,
   ioData: JSX.Element[],
-  printAggregation: JSX.Element[],
+  flushedIndex: number
   pluginTookControl: boolean,
   user: string,
   path: string
 };
 type ITerminalPluginClass = new (term: ITerminal) => AbsTerminalPlugin;
 
-class Terminal extends React.Component<ConsoleProps, ConsoleState> implements ITerminal {
+export class Terminal extends React.Component<ConsoleProps, ConsoleState> implements ITerminal {
   private disableEnter: boolean = false;
   private disableKeydownPD = false;
   private pluginsInUse: AbsTerminalPlugin[] = [];
@@ -26,7 +26,7 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
 
   constructor(props: ConsoleProps) {
     super(props);
-    this.state = {inputValue: '', ioData: [], user: '', path: '', printAggregation: [], pluginTookControl: false};
+    this.state = {flushedIndex: 0, inputValue: '', ioData: [], user: '', path: '', pluginTookControl: false};
   }
 
   public getInputValue() {
@@ -40,29 +40,26 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   public print(val = '', end = '\n', style = {}) {
     if (val === '' && end === '\n')
       end = '';
-    let jsx = <span style={style} key={this.state.printAggregation.length}>{val + end}</span>;
+    let jsx = <span style={style} key={this.state.ioData.length}>{val + end}</span>;
     this.setState(prev => ({
-      printAggregation: [...prev.printAggregation, jsx]
+      ioData: [...prev.ioData, jsx]
     }));
     this.ScrollToBottom();
   }
 
   public printJSX(jsx: JSX.Element) {
-    let j = <div key={this.state.printAggregation.length}>{jsx}</div>;
+    let j = <div key={this.state.ioData.length}>{jsx}</div>;
     this.setState(prev => ({
-      printAggregation: [...prev.printAggregation, j]
+      ioData: [...prev.ioData, j]
     }));
     this.ScrollToBottom();
   }
 
   public performPrint() {
-    if (this.state.printAggregation.length > 0) {
-      this.setState(prev => ({
+    this.setState(prev => ({
         inputValue: '',
-        ioData: [...prev.ioData, ...prev.printAggregation],
-        printAggregation: []
+      flushedIndex: prev.ioData.length
       }));
-    }
     this.ScrollToBottom();
   }
 
@@ -105,7 +102,6 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
 
   public setPath(path: string, newLine = true) {
     if (newLine) {
-      this.print('');
       this.performPrint();
     }
     this.setState({
@@ -119,7 +115,6 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
 
   public setUser(user: string, newLine = true) {
     if (newLine) {
-      this.print('');
       this.performPrint();
     }
     this.setState({
@@ -166,16 +161,13 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
   render() {
     const paneldata = this.state.ioData.map((o, i) => {
       return (
-        <div className="Console-ioline" key={i}>{o}</div>
+        <div className={"Console-ioline" + (this.state.flushedIndex < i ? '' : ' Console-disabled')} key={i}>{o}</div>
       )
     });
     return (
       <div className="Console-container">
         <div className="Console-iopanel">
           {paneldata}
-          <div >
-            {this.state.printAggregation}
-          </div>
         </div>
         <div className="Console-inputline" ref={el => {this.container = el}}>
           {this.state.pluginTookControl ? null :
@@ -188,8 +180,8 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
                 autoFocus={true}
                 autoComplete="off"
                 value={this.state.inputValue}
-                onChange={e => this.setState({inputValue: e.target.value})}
-                disabled={this.state.pluginTookControl}/>]}
+                onChange={e => this.setState({inputValue: e.target.value})}/>]
+          }
         </div>
       </div>
     );
@@ -234,6 +226,9 @@ class Terminal extends React.Component<ConsoleProps, ConsoleState> implements IT
           this.commandHandlers[''].forEach((f) => f(args));
         } else if (this.commandHandlers.hasOwnProperty('_Default')) {
           this.commandHandlers['_Default'].forEach((f) => f(args));
+        }
+        if (!this.state.pluginTookControl) {
+          this.performPrint();
         }
       }
     ];

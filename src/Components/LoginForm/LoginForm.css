@@ -1,0 +1,35 @@
+.LoginForm-input {
+  margin-right: 10px;
+  margin-top: 10px;
+  font-family: Consolas, monospace;
+  background-color: transparent;
+  color: white;
+  outline: none;
+  border: 1px solid white;
+  padding: 0;
+}
+
+textarea {
+  overflow: hidden;
+
+}
+
+.LoginForm-submit {
+}
+
+.LoginForm-submit:hover {
+  background-color: #444444;
+}
+
+.LoginForm-submit:focus {
+  background-color: #aaaaaa;
+}
+
+.Login-form {
+  margin-top: 7px;
+}
+
+.LoginForm-span {
+  margin-right: 10px;
+}
+

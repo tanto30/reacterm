@@ -1,19 +1,7 @@
-import Terminal from './terminal';
-import {
-  AutoCompletePlugin,
-  BasePlugin,
-  FileSystemPlugin,
-  HistoryPlugin,
-  AbsTerminalPlugin,
-  ITerminal
-} from "./Plugins";
+export * from './Plugins';
+export * from './Components';
+export * from './terminal';
 
-export {
-  Terminal,
-  AutoCompletePlugin,
-  BasePlugin,
-  FileSystemPlugin,
-  HistoryPlugin,
-  AbsTerminalPlugin,
-  ITerminal
-}
+import Terminal from "./terminal";
+
+export default Terminal;
