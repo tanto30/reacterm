@@ -22,23 +22,12 @@ export class LoginForm extends React.Component<FormProps, FormState> {
 
   constructor(props: FormProps) {
     super(props);
-    let s: { [i: string]: string } = {};
+    let s: { [key: string]: string } = {};
+    this.props.fields.forEach(o => {
+      s[o.name] = o.initValue ? o.initValue : ''
+    });
     this.state = s;
   }
-
-  componentDidMount(): void {
-    if (!this.mounted) {
-      console.log('pooasodk');
-      this.props.fields.forEach(o => {
-        if (o.initValue)
-          this.setState({
-            [o.name]: o.initValue
-          });
-      });
-      this.mounted = true;
-    }
-  }
-
 
   private handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const name = e.target.name;
