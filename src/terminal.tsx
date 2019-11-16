@@ -171,8 +171,8 @@ export class Terminal extends React.Component<ConsoleProps, ConsoleState> implem
         </div>
         <div className="Console-inputline" ref={el => {this.container = el}}>
           {this.state.pluginTookControl ? null :
-            [this.getPrompt(),
-              <input
+            [<span key={0}>{this.getPrompt()}</span>,
+              <input key={1}
                 ref={el => {
                   this.inputElement = el
                 }}
