@@ -207,31 +207,11 @@ export class Terminal extends React.Component<ConsoleProps, ConsoleState> implem
   };
 
   private RegisterPlugins(): void {
-    this.commandHandlers[''] = [
-      () => {
-      }
-    ];
-    this.keydownHandlers['Enter'] = [
-      () => {
-        this.print(this.getPrompt() + this.getInputValue());
-        const [cmd, ...args] = this.getInputValue().split(' ');
-        if (this.commandHandlers.hasOwnProperty(cmd)) {
-          const handlers = this.commandHandlers[cmd];
-          handlers.forEach((f) => {
-            f(args);
-          })
-        } else if (cmd.length == 0) {
-          if (this.commandHandlers.hasOwnProperty('_Empty'))
-            this.commandHandlers['_Empty'].forEach((f) => f(args));
-          this.commandHandlers[''].forEach((f) => f(args));
-        } else if (this.commandHandlers.hasOwnProperty('_Default')) {
-          this.commandHandlers['_Default'].forEach((f) => f(args));
-        }
-        if (!this.state.pluginTookControl) {
-          this.performPrint();
-        }
-      }
-    ];
+    this.commandHandlers = {
+      '': [() => {
+      }]
+    };
+    this.keydownHandlers['Enter'] = [];
     this.props.plugins.forEach((plugin) => {
       const instance = new plugin(this);
       this.pluginsInUse.push(instance);
@@ -254,6 +234,27 @@ export class Terminal extends React.Component<ConsoleProps, ConsoleState> implem
         }
       }
     });
+    this.keydownHandlers['Enter'].push(
+      () => {
+        this.print(this.getPrompt() + this.getInputValue());
+        const [cmd, ...args] = this.getInputValue().split(' ');
+        if (this.commandHandlers.hasOwnProperty(cmd)) {
+          const handlers = this.commandHandlers[cmd];
+          handlers.forEach((f) => {
+            f(args);
+          })
+        } else if (cmd.length == 0) {
+          if (this.commandHandlers.hasOwnProperty('_Empty'))
+            this.commandHandlers['_Empty'].forEach((f) => f(args));
+          this.commandHandlers[''].forEach((f) => f(args));
+        } else if (this.commandHandlers.hasOwnProperty('_Default')) {
+          this.commandHandlers['_Default'].forEach((f) => f(args));
+        }
+        if (!this.state.pluginTookControl) {
+          this.performPrint();
+        }
+      }
+    );
   }
 
   private _documentClickHandler = () => {

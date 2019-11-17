@@ -37,7 +37,6 @@ export abstract class AbsTerminalPlugin {
     cb = cb.bind(this);
     this.commands[name] = (args: string[]) => {
       if (argsnum && !(argsnum.includes(args.length))) {
-        console.log(argsnum);
         this.term.print("Wrong number of arguments");
       } else {
         cb(args);

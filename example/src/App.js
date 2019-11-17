@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import Terminal, {BasePlugin} from 'reacterm';
+import Terminal, {BasePlugin, HistoryPlugin} from 'reacterm';
 
 
 export default class App extends Component {
@@ -11,7 +11,7 @@ export default class App extends Component {
         <div id="content">
           <Sidebar/>
           <div id="sidexpand"/>
-          <Terminal plugins = {[BasePlugin]}/>
+          <Terminal plugins={[BasePlugin, HistoryPlugin]}/>
         </div>
       </div>
     );
